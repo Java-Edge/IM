@@ -1,6 +1,6 @@
 package com.javaedge.im.tcp.register;
 
-import com.lld.im.common.constant.Constants;
+import com.javaedge.im.common.constant.Constants;
 import org.I0Itec.zkclient.ZkClient;
 
 /**

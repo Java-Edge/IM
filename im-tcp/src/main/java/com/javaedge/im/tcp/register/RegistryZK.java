@@ -1,7 +1,7 @@
 package com.javaedge.im.tcp.register;
 
-import com.lld.im.codec.config.BootstrapConfig;
-import com.lld.im.common.constant.Constants;
+import com.javaedge.im.codec.config.BootstrapConfig;
+import com.javaedge.im.common.constant.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

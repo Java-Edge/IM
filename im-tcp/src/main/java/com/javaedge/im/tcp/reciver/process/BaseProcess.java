@@ -1,6 +1,6 @@
 package com.javaedge.im.tcp.reciver.process;
 
-import com.lld.im.codec.proto.MessagePack;
+import com.javaedge.im.codec.proto.MessagePack;
 import com.javaedge.im.tcp.utils.SessionSocketHolder;
 import io.netty.channel.socket.nio.NioSocketChannel;
 

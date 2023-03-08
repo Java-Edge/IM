@@ -1,6 +1,6 @@
 package com.javaedge.im.tcp.utils;
 
-import com.lld.im.codec.config.BootstrapConfig;
+import com.javaedge.im.codec.config.BootstrapConfig;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;

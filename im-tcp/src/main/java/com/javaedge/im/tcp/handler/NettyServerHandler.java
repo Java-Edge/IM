@@ -4,22 +4,22 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import com.javaedge.im.tcp.publish.MqMessageProducer;
-import com.lld.im.codec.pack.LoginPack;
-import com.lld.im.codec.pack.message.ChatMessageAck;
-import com.lld.im.codec.pack.user.LoginAckPack;
-import com.lld.im.codec.pack.user.UserStatusChangeNotifyPack;
-import com.lld.im.codec.proto.Message;
-import com.lld.im.codec.proto.MessagePack;
-import com.lld.im.common.ResponseVO;
-import com.lld.im.common.constant.Constants;
-import com.lld.im.common.enums.ImConnectStatusEnum;
-import com.lld.im.common.enums.command.GroupEventCommand;
-import com.lld.im.common.enums.command.MessageCommand;
-import com.lld.im.common.enums.command.SystemCommand;
-import com.lld.im.common.enums.command.UserEventCommand;
-import com.lld.im.common.model.UserClientDto;
-import com.lld.im.common.model.UserSession;
-import com.lld.im.common.model.message.CheckSendMessageReq;
+import com.javaedge.im.codec.pack.LoginPack;
+import com.javaedge.im.codec.pack.message.ChatMessageAck;
+import com.javaedge.im.codec.pack.user.LoginAckPack;
+import com.javaedge.im.codec.pack.user.UserStatusChangeNotifyPack;
+import com.javaedge.im.codec.proto.Message;
+import com.javaedge.im.codec.proto.MessagePack;
+import com.javaedge.im.common.ResponseVO;
+import com.javaedge.im.common.constant.Constants;
+import com.javaedge.im.common.enums.ImConnectStatusEnum;
+import com.javaedge.im.common.enums.command.GroupEventCommand;
+import com.javaedge.im.common.enums.command.MessageCommand;
+import com.javaedge.im.common.enums.command.SystemCommand;
+import com.javaedge.im.common.enums.command.UserEventCommand;
+import com.javaedge.im.common.model.UserClientDto;
+import com.javaedge.im.common.model.UserSession;
+import com.javaedge.im.common.model.message.CheckSendMessageReq;
 import com.javaedge.im.tcp.feign.FeignMessageService;
 import com.javaedge.im.tcp.redis.RedisManager;
 import com.javaedge.im.tcp.utils.SessionSocketHolder;
@@ -40,9 +40,7 @@ import org.slf4j.LoggerFactory;
 import java.net.InetAddress;
 
 /**
- * @description:
  * @author JavaEdge
- * @version: 1.0
  */
 public class NettyServerHandler extends SimpleChannelInboundHandler<Message> {
 
@@ -59,7 +57,8 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<Message> {
         feignMessageService = Feign.builder()
                 .encoder(new JacksonEncoder())
                 .decoder(new JacksonDecoder())
-                .options(new Request.Options(1000, 3500))//设置超时时间
+                // 设置超时时间
+                .options(new Request.Options(1000, 3500))
                 .target(FeignMessageService.class, logicUrl);
     }
 

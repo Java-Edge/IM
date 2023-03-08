@@ -1,12 +1,12 @@
 package com.javaedge.im.tcp.reciver;
 
 import com.alibaba.fastjson.JSONObject;
-import com.lld.im.codec.proto.MessagePack;
-import com.lld.im.common.ClientType;
-import com.lld.im.common.constant.Constants;
-import com.lld.im.common.enums.DeviceMultiLoginEnum;
-import com.lld.im.common.enums.command.SystemCommand;
-import com.lld.im.common.model.UserClientDto;
+import com.javaedge.im.codec.proto.MessagePack;
+import com.javaedge.im.common.ClientType;
+import com.javaedge.im.common.constant.Constants;
+import com.javaedge.im.common.enums.DeviceMultiLoginEnum;
+import com.javaedge.im.common.enums.command.SystemCommand;
+import com.javaedge.im.common.model.UserClientDto;
 import com.javaedge.im.tcp.redis.RedisManager;
 import com.javaedge.im.tcp.utils.SessionSocketHolder;
 import io.netty.channel.socket.nio.NioSocketChannel;

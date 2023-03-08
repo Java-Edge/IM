@@ -1,7 +1,7 @@
 package com.javaedge.im.tcp.redis;
 
 import com.javaedge.im.tcp.reciver.UserLoginMessageListener;
-import com.lld.im.codec.config.BootstrapConfig;
+import com.javaedge.im.codec.config.BootstrapConfig;
 import org.redisson.api.RedissonClient;
 
 /**

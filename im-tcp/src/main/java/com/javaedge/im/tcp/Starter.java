@@ -7,7 +7,7 @@ import com.javaedge.im.tcp.register.ZKit;
 import com.javaedge.im.tcp.server.LimServer;
 import com.javaedge.im.tcp.server.LimWebSocketServer;
 import com.javaedge.im.tcp.utils.MqFactory;
-import com.lld.im.codec.config.BootstrapConfig;
+import com.javaedge.im.codec.config.BootstrapConfig;
 import org.I0Itec.zkclient.ZkClient;
 import org.yaml.snakeyaml.Yaml;
 
