@@ -19,13 +19,11 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 
 /**
- * @description:
- * 多端同步：1单端登录：一端在线：踢掉除了本clinetType + imel 的设备
- *          2双端登录：允许pc/mobile 其中一端登录 + web端 踢掉除了本clinetType + imel 以外的web端设备
- *        3 三端登录：允许手机+pc+web，踢掉同端的其他imei 除了web
- *        4 不做任何处理
- *
  * @author JavaEdge
+ * @description: 多端同步：1单端登录：一端在线：踢掉除了本clinetType + imel 的设备
+ * 2双端登录：允许pc/mobile 其中一端登录 + web端 踢掉除了本clinetType + imel 以外的web端设备
+ * 3 三端登录：允许手机+pc+web，踢掉同端的其他imei 除了web
+ * 4 不做任何处理
  * @version: 1.0
  */
 public class UserLoginMessageListener {
@@ -38,7 +36,7 @@ public class UserLoginMessageListener {
         this.loginModel = loginModel;
     }
 
-    public void listenerUserLogin(){
+    public void listenerUserLogin() {
         RTopic topic = RedisManager.getRedissonClient().getTopic(Constants.RedisConstants.UserLoginChannel);
         topic.addListener(String.class, new MessageListener<String>() {
             @Override
@@ -48,11 +46,11 @@ public class UserLoginMessageListener {
                 List<NioSocketChannel> nioSocketChannels = SessionSocketHolder.get(dto.getAppId(), dto.getUserId());
 
                 for (NioSocketChannel nioSocketChannel : nioSocketChannels) {
-                    if(loginModel == DeviceMultiLoginEnum.ONE.getLoginMode()){
+                    if (loginModel == DeviceMultiLoginEnum.ONE.getLoginMode()) {
                         Integer clientType = (Integer) nioSocketChannel.attr(AttributeKey.valueOf(Constants.ClientType)).get();
                         String imei = (String) nioSocketChannel.attr(AttributeKey.valueOf(Constants.Imei)).get();
 
-                        if(!(clientType + ":" + imei).equals(dto.getClientType()+":"+dto.getImei())){
+                        if (!(clientType + ":" + imei).equals(dto.getClientType() + ":" + dto.getImei())) {
                             MessagePack<Object> pack = new MessagePack<>();
                             pack.setToId((String) nioSocketChannel.attr(AttributeKey.valueOf(Constants.UserId)).get());
                             pack.setUserId((String) nioSocketChannel.attr(AttributeKey.valueOf(Constants.UserId)).get());
@@ -60,17 +58,17 @@ public class UserLoginMessageListener {
                             nioSocketChannel.writeAndFlush(pack);
                         }
 
-                    }else if(loginModel == DeviceMultiLoginEnum.TWO.getLoginMode()){
-                        if(dto.getClientType() == ClientType.WEB.getCode()){
+                    } else if (loginModel == DeviceMultiLoginEnum.TWO.getLoginMode()) {
+                        if (dto.getClientType() == ClientType.WEB.getCode()) {
                             continue;
                         }
                         Integer clientType = (Integer) nioSocketChannel.attr(AttributeKey.valueOf(Constants.ClientType)).get();
 
-                        if (clientType == ClientType.WEB.getCode()){
+                        if (clientType == ClientType.WEB.getCode()) {
                             continue;
                         }
                         String imei = (String) nioSocketChannel.attr(AttributeKey.valueOf(Constants.Imei)).get();
-                        if(!(clientType + ":" + imei).equals(dto.getClientType()+":"+dto.getImei())){
+                        if (!(clientType + ":" + imei).equals(dto.getClientType() + ":" + dto.getImei())) {
                             MessagePack<Object> pack = new MessagePack<>();
                             pack.setToId((String) nioSocketChannel.attr(AttributeKey.valueOf(Constants.UserId)).get());
                             pack.setUserId((String) nioSocketChannel.attr(AttributeKey.valueOf(Constants.UserId)).get());
@@ -78,30 +76,30 @@ public class UserLoginMessageListener {
                             nioSocketChannel.writeAndFlush(pack);
                         }
 
-                    }else if(loginModel == DeviceMultiLoginEnum.THREE.getLoginMode()){
+                    } else if (loginModel == DeviceMultiLoginEnum.THREE.getLoginMode()) {
 
                         Integer clientType = (Integer) nioSocketChannel.attr(AttributeKey.valueOf(Constants.ClientType)).get();
                         String imei = (String) nioSocketChannel.attr(AttributeKey.valueOf(Constants.Imei)).get();
-                        if(dto.getClientType() == ClientType.WEB.getCode()){
+                        if (dto.getClientType() == ClientType.WEB.getCode()) {
                             continue;
                         }
 
                         Boolean isSameClient = false;
-                        if((clientType == ClientType.IOS.getCode() ||
+                        if ((clientType == ClientType.IOS.getCode() ||
                                 clientType == ClientType.ANDROID.getCode()) &&
                                 (dto.getClientType() == ClientType.IOS.getCode() ||
-                                        dto.getClientType() == ClientType.ANDROID.getCode())){
+                                        dto.getClientType() == ClientType.ANDROID.getCode())) {
                             isSameClient = true;
                         }
 
-                        if((clientType == ClientType.MAC.getCode() ||
+                        if ((clientType == ClientType.MAC.getCode() ||
                                 clientType == ClientType.WINDOWS.getCode()) &&
                                 (dto.getClientType() == ClientType.MAC.getCode() ||
-                                        dto.getClientType() == ClientType.WINDOWS.getCode())){
+                                        dto.getClientType() == ClientType.WINDOWS.getCode())) {
                             isSameClient = true;
                         }
 
-                        if(isSameClient && !(clientType + ":" + imei).equals(dto.getClientType()+":"+dto.getImei())){
+                        if (isSameClient && !(clientType + ":" + imei).equals(dto.getClientType() + ":" + dto.getImei())) {
                             MessagePack<Object> pack = new MessagePack<>();
                             pack.setToId((String) nioSocketChannel.attr(AttributeKey.valueOf(Constants.UserId)).get());
                             pack.setUserId((String) nioSocketChannel.attr(AttributeKey.valueOf(Constants.UserId)).get());

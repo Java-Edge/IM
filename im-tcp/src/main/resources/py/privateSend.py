@@ -15,12 +15,12 @@ s.connect(("127.0.0.1",9000))
 
 
 ## 基础数据
-command = 9888
+command = 9000
 version = 1
 clientType = 4
 messageType = 0x0
 appId = 10000
-name = 'lld'
+name = 'JavaEdge'
 
 ## 数据转换为bytes
 commandByte = command.to_bytes(4,'big')
@@ -39,7 +39,7 @@ body_len = len(body)
 bodyLenBytes = body_len.to_bytes(4,'big')
 
 # s.sendall(commandByte + versionByte + clientTypeByte + messageTypeByte + appIdByte + imeiLengthByte + bodyLenBytes + imeiBytes + body)
-for x in range(100):
+for x in range(1):
   s.sendall(commandByte + versionByte + clientTypeByte + messageTypeByte + appIdByte + imeiLengthByte + bodyLenBytes  + imeiBytes + body)    
 
 

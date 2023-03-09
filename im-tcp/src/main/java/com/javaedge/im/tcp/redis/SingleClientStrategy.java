@@ -10,8 +10,8 @@ import org.redisson.config.Config;
 import org.redisson.config.SingleServerConfig;
 
 /**
- * @description:
  * @author JavaEdge
+ * @description:
  * @version: 1.0
  */
 public class SingleClientStrategy {

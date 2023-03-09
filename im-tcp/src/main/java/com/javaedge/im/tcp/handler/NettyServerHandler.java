@@ -52,7 +52,7 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<Message> {
 
     private FeignMessageService feignMessageService;
 
-    public NettyServerHandler(Integer brokerId,String logicUrl) {
+    public NettyServerHandler(Integer brokerId, String logicUrl) {
         this.brokerId = brokerId;
         feignMessageService = Feign.builder()
                 .encoder(new JacksonEncoder())
@@ -62,26 +62,26 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<Message> {
                 .target(FeignMessageService.class, logicUrl);
     }
 
-    //String
-    //Map
-    // userId client1 session
-    // userId client2 session
+    /**
+     * @param ctx
+     * @param msg
+     * @throws Exception
+     */
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Message msg) throws Exception {
 
         Integer command = msg.getMessageHeader().getCommand();
-        //登录command
-        if(command == SystemCommand.LOGIN.getCommand()){
-
+        // 登录command
+        if (command == SystemCommand.LOGIN.getCommand()) {
             LoginPack loginPack = JSON.parseObject(JSONObject.toJSONString(msg.getMessagePack()),
                     new TypeReference<LoginPack>() {
                     }.getType());
-            /** 登陸事件 **/
+            // 登录事件
             String userId = loginPack.getUserId();
-            /** 为channel设置用户id **/
+            // 为channel设置用户id
             ctx.channel().attr(AttributeKey.valueOf(Constants.UserId)).set(userId);
             String clientImei = msg.getMessageHeader().getClientType() + ":" + msg.getMessageHeader().getImei();
-            /** 为channel设置client和imel **/
+            // 为channel设置client和imel
             ctx.channel().attr(AttributeKey.valueOf(Constants.ClientImei)).set(clientImei);
             /** 为channel设置appId **/
             ctx.channel().attr(AttributeKey.valueOf(Constants.AppId)).set(msg.getMessageHeader().getAppId());
@@ -93,8 +93,6 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<Message> {
                     .set(msg.getMessageHeader().getImei());
             //将channel存起来
 
-            //Redis map
-
             UserSession userSession = new UserSession();
             userSession.setAppId(msg.getMessageHeader().getAppId());
             userSession.setClientType(msg.getMessageHeader().getClientType());
@@ -105,18 +103,19 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<Message> {
             try {
                 InetAddress localHost = InetAddress.getLocalHost();
                 userSession.setBrokerHost(localHost.getHostAddress());
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 
             RedissonClient redissonClient = RedisManager.getRedissonClient();
-            RMap<String, String> map = redissonClient.getMap(msg.getMessageHeader().getAppId() + Constants.RedisConstants.UserSessionConstants + loginPack.getUserId());
-            map.put(msg.getMessageHeader().getClientType()+":" + msg.getMessageHeader().getImei()
-                    ,JSONObject.toJSONString(userSession));
-            SessionSocketHolder
-                    .put(msg.getMessageHeader().getAppId()
-                            ,loginPack.getUserId(),
-                            msg.getMessageHeader().getClientType(),msg.getMessageHeader().getImei(),(NioSocketChannel) ctx.channel());
+            RMap<String, String> map = redissonClient.getMap(msg.getMessageHeader().getAppId() +
+                    Constants.RedisConstants.UserSessionConstants + loginPack.getUserId());
+            map.put(msg.getMessageHeader().getClientType() + ":" + msg.getMessageHeader().getImei()
+                    , JSONObject.toJSONString(userSession));
+            SessionSocketHolder.put(msg.getMessageHeader().getAppId()
+                            , loginPack.getUserId(),
+                            msg.getMessageHeader().getClientType(), msg.getMessageHeader().getImei(),
+                            (NioSocketChannel) ctx.channel());
 
             UserClientDto dto = new UserClientDto();
             dto.setImei(msg.getMessageHeader().getImei());
@@ -130,7 +129,8 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<Message> {
             userStatusChangeNotifyPack.setAppId(msg.getMessageHeader().getAppId());
             userStatusChangeNotifyPack.setUserId(loginPack.getUserId());
             userStatusChangeNotifyPack.setStatus(ImConnectStatusEnum.ONLINE_STATUS.getCode());
-            MqMessageProducer.sendMessage(userStatusChangeNotifyPack,msg.getMessageHeader(), UserEventCommand.USER_ONLINE_STATUS_CHANGE.getCommand());
+            MqMessageProducer.sendMessage(userStatusChangeNotifyPack, msg.getMessageHeader(),
+                    UserEventCommand.USER_ONLINE_STATUS_CHANGE.getCommand());
 
             MessagePack<LoginAckPack> loginSuccess = new MessagePack<>();
             LoginAckPack loginAckPack = new LoginAckPack();
@@ -141,15 +141,15 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<Message> {
             loginSuccess.setAppId(msg.getMessageHeader().getAppId());
             ctx.channel().writeAndFlush(loginSuccess);
 
-        }else if(command == SystemCommand.LOGOUT.getCommand()){
+        } else if (command == SystemCommand.LOGOUT.getCommand()) {
             //删除session
             //redis 删除
             SessionSocketHolder.removeUserSession((NioSocketChannel) ctx.channel());
-        }else if(command == SystemCommand.PING.getCommand()){
+        } else if (command == SystemCommand.PING.getCommand()) {
             ctx.channel()
                     .attr(AttributeKey.valueOf(Constants.ReadTime)).set(System.currentTimeMillis());
-        }else if(command == MessageCommand.MSG_P2P.getCommand()
-        || command == GroupEventCommand.MSG_GROUP.getCommand()){
+        } else if (command == MessageCommand.MSG_P2P.getCommand()
+                || command == GroupEventCommand.MSG_GROUP.getCommand()) {
 
             try {
                 String toId = "";
@@ -158,22 +158,22 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<Message> {
                 req.setCommand(msg.getMessageHeader().getCommand());
                 JSONObject jsonObject = JSON.parseObject(JSONObject.toJSONString(msg.getMessagePack()));
                 String fromId = jsonObject.getString("fromId");
-                if(command == MessageCommand.MSG_P2P.getCommand()){
+                if (command == MessageCommand.MSG_P2P.getCommand()) {
                     toId = jsonObject.getString("toId");
-                }else {
+                } else {
                     toId = jsonObject.getString("groupId");
                 }
                 req.setToId(toId);
                 req.setFromId(fromId);
 
                 ResponseVO responseVO = feignMessageService.checkSendMessage(req);
-                if(responseVO.isOk()){
-                    MqMessageProducer.sendMessage(msg,command);
-                }else{
+                if (responseVO.isOk()) {
+                    MqMessageProducer.sendMessage(msg, command);
+                } else {
                     Integer ackCommand = 0;
-                    if(command == MessageCommand.MSG_P2P.getCommand()){
+                    if (command == MessageCommand.MSG_P2P.getCommand()) {
                         ackCommand = MessageCommand.MSG_ACK.getCommand();
-                    }else {
+                    } else {
                         ackCommand = GroupEventCommand.GROUP_MSG_ACK.getCommand();
                     }
 
@@ -184,11 +184,11 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<Message> {
                     ack.setCommand(ackCommand);
                     ctx.channel().writeAndFlush(ack);
                 }
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
-        }else {
-            MqMessageProducer.sendMessage(msg,command);
+        } else {
+            MqMessageProducer.sendMessage(msg, command);
         }
 
     }

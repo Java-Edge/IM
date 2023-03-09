@@ -5,9 +5,7 @@ import com.javaedge.im.codec.config.BootstrapConfig;
 import org.redisson.api.RedissonClient;
 
 /**
- * @description:
  * @author JavaEdge
- * @version: 1.0
  */
 public class RedisManager {
 
@@ -15,7 +13,7 @@ public class RedisManager {
 
     private static Integer loginModel;
 
-    public static void init(BootstrapConfig config){
+    public static void init(BootstrapConfig config) {
         loginModel = config.getLim().getLoginModel();
         SingleClientStrategy singleClientStrategy = new SingleClientStrategy();
         redissonClient = singleClientStrategy.getRedissonClient(config.getLim().getRedis());
@@ -23,7 +21,7 @@ public class RedisManager {
         userLoginMessageListener.listenerUserLogin();
     }
 
-    public static RedissonClient getRedissonClient(){
+    public static RedissonClient getRedissonClient() {
         return redissonClient;
     }
 

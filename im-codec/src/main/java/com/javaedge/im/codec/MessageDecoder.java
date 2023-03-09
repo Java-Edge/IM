@@ -15,11 +15,13 @@ import java.util.List;
  */
 public class MessageDecoder extends ByteToMessageDecoder {
 
+    private static final int PROTO_LENGTH = 28;
+
     @Override
     protected void decode(ChannelHandlerContext ctx,
                           ByteBuf in, List<Object> out) throws Exception {
 
-        if (in.readableBytes() < 28) {
+        if (in.readableBytes() < PROTO_LENGTH) {
             return;
         }
 

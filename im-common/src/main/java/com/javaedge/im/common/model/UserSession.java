@@ -3,9 +3,7 @@ package com.javaedge.im.common.model;
 import lombok.Data;
 
 /**
- * @description:
  * @author JavaEdge
- * @version: 1.0
  */
 @Data
 public class UserSession {
@@ -22,10 +20,14 @@ public class UserSession {
      */
     private Integer clientType;
 
-    //sdk 版本号
+    /**
+     * sdk 版本号
+     */
     private Integer version;
 
-    //连接状态 1=在线 2=离线
+    /**
+     * 连接状态 1=在线 2=离线
+     */
     private Integer connectState;
 
     private Integer brokerId;

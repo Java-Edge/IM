@@ -1,5 +1,8 @@
 package com.javaedge.im.common.enums.command;
 
+/**
+ * @author sss
+ */
 public enum SystemCommand implements Command {
 
     //心跳 9999

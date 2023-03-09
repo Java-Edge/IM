@@ -3,9 +3,7 @@ package com.javaedge.im.common.model;
 import lombok.Data;
 
 /**
- * @description:
  * @author JavaEdge
- * @version: 1.0
  */
 @Data
 public class UserClientDto {
